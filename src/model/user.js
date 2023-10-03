@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
+  resetToken: { type: String, required: false },
 });
 
 //Hashear contraseña ANTES de guardar en la base de datos

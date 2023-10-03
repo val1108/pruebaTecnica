@@ -1,0 +1,47 @@
+* {
+  background-color: #033d59;
+  font-family: Arial, Helvetica, sans-serif;
+}
+form {
+  width: 34vw;
+  margin: 0 auto;
+  padding: 10vw;
+  color: #ffffff;
+  text-align: center;
+}
+h2 {
+  font-size: 2vw;
+  font-weight: 600;
+  color: #f3ab59;
+}
+.section {
+  margin: 1vw 0;
+}
+.title {
+  font-size: 1.1vw;
+  margin: 1vw 0;
+}
+.field input {
+  padding: 0.5vw;
+  border-radius: 0.8vw;
+  border-color: #cccc;
+  border-bottom: 0.5vw;
+  background: #ffffff;
+}
+.sectionDown {
+  font-size: 1.4vw;
+  margin: 1.2vw;
+  text-align: center;
+}
+.button input {
+  background-color: #f3ab59;
+  padding: 0.5vw 0.7vw;
+  border-radius: 1vw;
+  margin-bottom: 1vw;
+  font-size: 1.2vw;
+}
+.button a {
+  text-decoration: underline;
+  font-weight: 600;
+  color: #f3ab59;
+}

@@ -7,6 +7,11 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const database = require("../src/database/db").mongoURIlocal;
 const userModel = require("../src/model/user");
+const jwt = require("jsonwebtoken");
+const secretKey = "supersecret";
+const options = {
+  expiresIn: "1h", // El token expirará en 1 hora
+};
 
 //Configurar lectura de datos
 app.use(bodyParser.json());
@@ -31,7 +36,7 @@ app.listen(port, () => {
   console.log(`La app esta escuchando en http://localhost:${port}`);
 });
 
-//Get
+//Get para mostrar Front
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/public", "index.html"));
 });
@@ -60,13 +65,57 @@ app.post("/autenticar", async (req, res) => {
     }
     const isCorrectPassword = await userFind.isCorrectPassword(password);
     if (isCorrectPassword) {
-      res.status(200).send("Usuario autenticado");
+      // Credenciales correctas, generar token
+      const payload = {
+        usuarioId: userFind._id, // Puedes usar el ID del usuario como identificador único en el token
+        nombre: userFind.user,
+      };
+
+      const token = jwt.sign(payload, secretKey, options);
+
+      // Devolver el token al cliente
+      res.status(200).json({ token });
+
+      console.log("Usuario autenticado");
     } else {
       res.status(500).send("Usuario y/o contraseña incorrectos");
     }
   } catch (error) {
     console.error("Error al autenticar usuario", error);
     res.status(500).send("Error al autenticar");
+  }
+});
+
+//Post para recuperar contraseña usando el token y enviando un email
+app.post("/recuperar", async (req, res) => {
+  const { user } = req.body;
+  try {
+    const userFind = await userModel.findOne({ user });
+    if (!userFind) {
+      return res.status(500).send("El usuario no existe");
+    }
+    if (userFind) {
+      //Se crea un token para recuperar contraseña
+      const resetToken = jwt.sign({ userFind }, secretKey, {
+        expiresIn: "1h",
+      });
+      console.log(resetToken);
+      try {
+        //Se guarda el token en a base de datos
+        await userModel.findByIdAndUpdate(userFind._id, { resetToken });
+
+        //Codigo para enviar email con token
+        //
+        //
+        res.status(200).send("Token enviado");
+      } catch (error) {
+        console.error("Ha ocurrido un error", error);
+        res.status(500).send("Error al guardar el token en la base de datos");
+      }
+    }
+  } catch (error) {
+    console.error("Error al recuperar contraseña", error);
+    res.status(500).send("Error al recuperar");
   }
 });
 

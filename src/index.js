@@ -41,6 +41,18 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/public", "index.html"));
 });
 
+//Get para mostrar usuarios
+app.get("/usuarios", async (req, res) => {
+  try {
+    const usuarios = await userModel.find();
+    const userShow = usuarios.map((usuario) => usuario.user);
+    res.json(userShow);
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
 //Post para registrar
 app.post("/registrar", async (req, res) => {
   const { user, password, email, phone } = req.body;

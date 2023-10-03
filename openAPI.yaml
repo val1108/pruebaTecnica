@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: API de Usuarios
+  version: 1.0.0
+paths:
+  /:
+    get:
+      summary: Obtener la página principal
+      responses:
+        '200':
+          description: Respuesta exitosa
+  /usuarios:
+    get:
+      summary: Obtener lista de todos los usuarios
+      responses:
+        '200':
+          description: Respuesta exitosa
+          content: Listado de los nombres de los usuarios registrados
+            application/json:
+              example: [{ "user": "usuario1", "email": "usuario1@example.com" }]
+  /registrar:
+    post:
+      summary: Registrar un nuevo usuario
+      requestBody: {
+                    "user": { type: String, required: true},
+                    "password": { type: String, required: true },
+                    "email": { type: String, required: true },
+                    "phone": { type: String, required: true },
+                    "resetToken": { type: String, required: false }
+                  }
+        required: true
+        content:
+          application/json:
+            example: { "user": "nuevoUsuario", "password": "contraseña", "email": "nuevoUsuario@example.com", "phone": "123456789" }
+      responses:
+        '200':
+          description: Usuario registrado con éxito
+        '500':
+          description: Error en el registro
+  /autenticar:
+    post:
+      summary: Autenticar usuario
+      requestBody: {
+                    "user": { type: String, required: true},
+                    "password": { type: String, required: true }
+                  }
+        required: true
+        content:
+          application/json:
+            example: { "user": "usuarioExistente", "password": "contraseña" }
+      responses:
+        '200':
+          description: Autenticación exitosa
+        '500':
+          description: El usuario no existe
+        '500':
+          description: Usuario y/o contraseña incorrectos
+        '500':
+          description: Error al autenticar
+          content:
+            application/json:
+              example: { "token": "tokenDeAutenticacion" }
+  /recuperar:
+    post:
+      summary: Recuperar contraseña
+      requestBody: { "user": { type: String, required: true}}
+        required: true
+        content:
+          application/json:
+            example: { "user": "usuarioExistente" }
+      responses:
+        '200':
+          description: Token enviado para recuperación
+        '500':
+          description: Error al guardar el token en la base de datos
+        '500':
+          description: Error al recuperar
+  /actualizar:
+    put:
+      summary: Actualizar datos del usuario
+      requestBody: { "user": { type: String, required: true}, 
+                    "email": { type: String, required: true }, 
+                    "phone": { type: String, required: true } }
+        required: true
+        content:
+          application/json:
+            example: { "user": "usuarioExistente", "email": "nuevoEmail", "phone": "nuevoTelefono" }
+      responses:
+        '200':
+          description: Actualización exitosa
+        '500':
+          description: Usuario no encontrado
+        '500':
+          description: Error al intentar actualizar
+  /eliminar/{user}:
+    delete:
+      summary: Eliminar usuario
+      parameters:
+        - in: path
+          name: user
+          required: true
+          schema:
+            type: string
+            example: usuarioAEliminar
+      responses:
+        '200':
+          description: Usuario eliminado correctamente
+        '500':
+          description: Usuario no encontrado
+        '500':
+          description: Error al eliminar + {error}
